@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./dobot-python/lib",
+        "./dobot-python"
+    ]
+}
