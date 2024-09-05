@@ -16,3 +16,4 @@ print('Params:', params)
 # Default start position
 bot.set_homing_command(0)
 sleep(1)
+bot.set_point_to_point_command(8, -30, 0, 0, 0)
