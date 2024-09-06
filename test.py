@@ -13,6 +13,9 @@ from time import sleep
 latest_command = None
 execute_flag = False  # Flag to indicate when to execute the command
 
+# Global threshold for coordinate difference
+COORDINATE_THRESHOLD = 2
+
 # Function to receive new commands
 def receive_command(new_command):
     global latest_command, execute_flag
@@ -54,14 +57,19 @@ def main():
                     # Move the robot to the home position if a fist is detected for the first time
                     bot.set_homing_command(0)
                     homing_executed = True
+                    running_coordinates = [275, 0, 85 , 0]
             elif my_listener.hand_detected:
                 delta_x, delta_y, delta_z, rotation, gripper = my_listener.prev_x, my_listener.prev_y, my_listener.prev_z, my_listener.prev_yaw, my_listener.thumb_index_flag
-                delta_x, delta_y, delta_z, rotation = int(-delta_z * 0.4), int(delta_x * 0.4), int(delta_y * 0.4), int(rotation * 0.4)
+                delta_x, delta_y, delta_z, rotation = int(-delta_z * 0.4), int(-delta_x * 0.4), int(delta_y * 0.4), int(rotation * 1)
                 x,y,z,r = bot.get_pose()[0:4]
-                # print(f"xyzr values: {[int(x), int(y), int(z), int(r)]}")
-                # print(running_coordinates)
-                # print(running_coordinates == [int(x), int(y), int(z), int(r)])
-                if (latest_coordinates != [delta_x, delta_y, delta_z, rotation]):
+                print(f"xyzr values: {[int(x), int(y), int(z), int(r)]}")
+                print(running_coordinates)
+                print(running_coordinates == [int(x), int(y), int(z), int(r)])
+                if (latest_coordinates != [delta_x, delta_y, delta_z, rotation] and
+                    abs(running_coordinates[0] - int(x)) <= COORDINATE_THRESHOLD and
+                    abs(running_coordinates[1] - int(y)) <= COORDINATE_THRESHOLD and
+                    abs(running_coordinates[2] - int(z)) <= COORDINATE_THRESHOLD and
+                    abs(running_coordinates[3] - int(r)) <= COORDINATE_THRESHOLD):
                     latest_coordinates = [delta_x, delta_y, delta_z, rotation]
                     running_coordinates = [275 + delta_x, 0 + delta_y, 85 + delta_z, rotation]
                     # print(latest_coordinates)
