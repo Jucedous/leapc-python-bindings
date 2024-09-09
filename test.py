@@ -62,9 +62,6 @@ def main():
                 delta_x, delta_y, delta_z, rotation, gripper = my_listener.prev_x, my_listener.prev_y, my_listener.prev_z, my_listener.prev_yaw, my_listener.thumb_index_flag
                 delta_x, delta_y, delta_z, rotation = int(-delta_z * 0.4), int(-delta_x * 0.4), int(delta_y * 0.4), int(rotation * 1)
                 x,y,z,r = bot.get_pose()[0:4]
-                print(f"xyzr values: {[int(x), int(y), int(z), int(r)]}")
-                print(running_coordinates)
-                print(running_coordinates == [int(x), int(y), int(z), int(r)])
                 if (latest_coordinates != [delta_x, delta_y, delta_z, rotation] and
                     abs(running_coordinates[0] - int(x)) <= COORDINATE_THRESHOLD and
                     abs(running_coordinates[1] - int(y)) <= COORDINATE_THRESHOLD and
@@ -72,7 +69,6 @@ def main():
                     abs(running_coordinates[3] - int(r)) <= COORDINATE_THRESHOLD):
                     latest_coordinates = [delta_x, delta_y, delta_z, rotation]
                     running_coordinates = [275 + delta_x, 0 + delta_y, 85 + delta_z, rotation]
-                    # print(latest_coordinates)
                     bot.set_point_to_point_command(2, *running_coordinates)
                 
                 if (prev_thumb_index_flag != gripper):
