@@ -7,6 +7,7 @@ lib_path = os.path.join(os.path.dirname(__file__), 'dobot-python')
 sys.path.append(lib_path)
 from lib.interface import Interface
 from my_listener import MyListener
+from LSTM import LSTMOptimizer
 
 from time import sleep
 
@@ -43,18 +44,18 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
 
 
+    # optimizer = LSTMOptimizer((10, 4))  # Assuming 10 timesteps and 4 features (x, y, z, rotation)
+    # hand_signal_buffer = []
     
     with connection.open():
         bot.set_homing_command(0)
         sleep(1)
         pose = bot.get_pose()
 
-        # Convert the first four elements of the pose to integers
         running_coordinates = [int(value) for value in pose[0:4]]
         while running:
             if my_listener.fist_detected:
                 if not homing_executed:
-                    # Move the robot to the home position if a fist is detected for the first time
                     bot.set_homing_command(0)
                     homing_executed = True
                     running_coordinates = [275, 0, 85 , 0]
@@ -70,6 +71,15 @@ def main():
                     latest_coordinates = [delta_x, delta_y, delta_z, rotation]
                     running_coordinates = [275 + delta_x, 0 + delta_y, 85 + delta_z, rotation]
                     bot.set_point_to_point_command(2, *running_coordinates)
+                    
+                    # hand_signal_buffer.append(running_coordinates)
+                    
+                    # if len(hand_signal_buffer) > 10:
+                    #     hand_signal_buffer.pop(0)
+
+                    # if len(hand_signal_buffer) == 10:
+                    #     optimized_signal = optimizer.predict(np.array([hand_signal_buffer]))[0]
+                    #     receive_command(optimized_signal)
                 
                 if (prev_thumb_index_flag != gripper):
                     prev_thumb_index_flag = gripper
@@ -81,7 +91,6 @@ def main():
                         bot.set_end_effector_gripper(True, False)
                 homing_executed = False
             else:
-                # Move the robot to a default position if no hand is detected
                 latest_coordinates = [0, 0, 0]
                 # bot.set_point_to_point_command(8, *latest_coordinates, 0)
     

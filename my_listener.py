@@ -63,6 +63,7 @@ class MyListener(leap.Listener):
             
             distance = math.sqrt((thumb_tip_x - index_tip_x) ** 2 + (thumb_tip_y - index_tip_y) ** 2 + (thumb_tip_z - index_tip_z) ** 2)
             distance = round(distance, 2)
+            print(distance)
 
             if (total_change > self.threshold):
                 adj_x, adj_y, adj_z = round(adj_x, 2), round(adj_y, 2), round(adj_z, 2)
